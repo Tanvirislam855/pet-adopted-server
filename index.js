@@ -1,10 +1,10 @@
 const express = require('express')
-const dotenv = require('dotenv')
+const dontenv = require('dotenv')
 const cors = require("cors")
 const { MongoClient, ServerApiVersion } = require('mongodb');
-dotenv.config()
+dontenv.config()
 const uri = process.env.MONGODB_URI;
-const cors = require('cors')
+
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -25,12 +25,12 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const db = client.db("pet-adopted")
-    const destinationCollection = db.collection("destinations")
-    app.post('/destination',async (req,res) =>{
+    const petCollection = db.collection("pets")
+    app.post('/add-pet',async (req,res) =>{
        
-        const destination = req.body
-         console.log(destinationData)
-        const result = await destinationCollection.insertOne(destinationData)
+        const petData = req.body
+         console.log(petData)
+        const result = await petCollection.insertOne(petData)
         res.json(result)
 
     })
