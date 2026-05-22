@@ -26,6 +26,12 @@ async function run() {
     await client.connect();
     const db = client.db("pet-adopted")
     const petCollection = db.collection("pets")
+    app.get('/all-pets', async (req,res) => {
+    const result = await petCollection.find().toArray();
+    res.json(result);
+    }) ;
+
+    
     app.post('/add-pet',async (req,res) =>{
        
         const petData = req.body
