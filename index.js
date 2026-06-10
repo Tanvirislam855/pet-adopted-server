@@ -1,7 +1,8 @@
 const express = require('express')
 const dontenv = require('dotenv')
 const cors = require("cors")
-const { MongoClient, ServerApiVersion } = require('mongodb');
+
+const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 dontenv.config()
 const uri = process.env.MONGODB_URI;
 
@@ -22,7 +23,7 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+   
     await client.connect();
     const db = client.db("pet-adopted")
     const petCollection = db.collection("pets")
@@ -38,14 +39,28 @@ async function run() {
          console.log(petData)
         const result = await petCollection.insertOne(petData)
         res.json(result)
-
     })
-    // Send a ping to confirm a successful connection
+    app.get("/all-pets/:id", async (req, res) => {
+  const id = req.params.id;
+  
+  try {
+    
+    const query = { _id: new ObjectId(id) };
+    const result = await petCollection.findOne(query);
+    
+    res.json(result);
+  } catch (error) {
+    
+    console.error("Error fetching pet details:", error);
+    res.status(400).json({ error: "Invalid ID format or pet not found" });
+  }
+});
+
+    
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    
   }
 }
 run().catch(console.dir);
