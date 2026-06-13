@@ -27,6 +27,8 @@ async function run() {
     await client.connect();
     const db = client.db("pet-adopted")
     const petCollection = db.collection("pets")
+    // booking
+    const bookCollection = db.collection("booking")
     app.get('/all-pets', async (req,res) => {
     const result = await petCollection.find().toArray();
     res.json(result);
@@ -55,6 +57,15 @@ async function run() {
     res.status(400).json({ error: "Invalid ID format or pet not found" });
   }
 });
+ 
+app.post("/book", async (req, res) => {
+      const bookData = req.body;
+      const result = await bookCollection.insertOne(bookData);
+
+      res.json(result);
+    });
+
+
 
     
     await client.db("admin").command({ ping: 1 });
