@@ -57,7 +57,16 @@ async function run() {
     res.status(400).json({ error: "Invalid ID format or pet not found" });
   }
 });
+
+app.get("/book/:userID", async(req,res) =>{
+  const { userID } = req.params;
+  const result = await bookCollection.find({ userID: userID }).toArray();
+  res.json(result)
+
+});
+
  
+
 app.post("/book", async (req, res) => {
       const bookData = req.body;
       const result = await bookCollection.insertOne(bookData);
