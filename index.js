@@ -74,7 +74,11 @@ app.post("/book", async (req, res) => {
       res.json(result);
     });
 
-
+    app.delete('/book/:bookId',async (req,res) => {
+      const {bookId} = req.params;
+      const result = await bookCollection.deleteOne({_id: new ObjectId(bookId)})
+      res.json(result)
+    })
 
     
     await client.db("admin").command({ ping: 1 });
