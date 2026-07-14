@@ -21,15 +21,18 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
 async function run() {
+  
   try {
    
-    await client.connect();
+    // await client.connect();
     const db = client.db("pet-adopted")
     const petCollection = db.collection("pets")
     // booking
     const bookCollection = db.collection("booking")
     app.get('/all-pets', async (req,res) => {
+      
     const result = await petCollection.find().toArray();
     res.json(result);
     }) ;
@@ -42,7 +45,16 @@ async function run() {
         const result = await petCollection.insertOne(petData)
         res.json(result)
     })
-    app.get("/all-pets/:id", async (req, res) => {
+    // Middleware
+    app.get("/all-pets/:id", 
+      async (req, res) => {
+        const header = req.headers.authorization
+    if (header !== "logged in"){
+      
+     return
+      res.status(401).json({message: "You are not logged in"})
+
+    }
   const id = req.params.id;
   
   try {
@@ -57,8 +69,15 @@ async function run() {
     res.status(400).json({ error: "Invalid ID format or pet not found" });
   }
 });
-
-app.get("/book/:userID", async(req,res) =>{
+app.get("/feature", async (req,res) => {
+  const result = await petCollection.find ().limit(4).toArray()
+  res.json(result)
+})
+// Middleware
+app.get("/book/:userID",(req, res) => 
+  
+  async(req,res) =>{
+  
   const { userID } = req.params;
   const result = await bookCollection.find({ userID: userID }).toArray();
   res.json(result)
@@ -81,7 +100,7 @@ app.post("/book", async (req, res) => {
     })
 
     
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     
